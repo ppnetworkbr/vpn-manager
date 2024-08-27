@@ -1,12 +1,12 @@
-'use client';
-import { Roboto } from 'next/font/google';
-import { createTheme } from '@mui/material/styles';
+'use client'
+import { Roboto } from 'next/font/google'
+import { createTheme } from '@mui/material/styles'
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
-});
+})
 
 const theme = createTheme({
   defaultColorScheme: 'light',
@@ -27,15 +27,12 @@ const theme = createTheme({
       main: '#ffe082',
       contrastText: 'rgba(232,232,232,0.87)',
     },
-    //divider: 'rgba(255,255,255,0.12)',
-
+    // divider: 'rgba(255,255,255,0.12)',
   },
-
 
   typography: {
     fontFamily: roboto.style.fontFamily,
   },
-  
-});
+})
 
-export default theme;
+export default theme

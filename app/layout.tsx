@@ -1,20 +1,19 @@
 import type { Metadata } from 'next'
-import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
-import { SessionProvider, } from 'next-auth/react'
-import CssBaseline from '@mui/material/CssBaseline';
+import { SessionProvider } from 'next-auth/react'
+import CssBaseline from '@mui/material/CssBaseline'
 
 import { auth } from '@/auth'
-import { ThemeProvider } from '@mui/material/styles';
-import getTheme from './styles/theme';
+import { ThemeProvider } from '@mui/material/styles'
+import getTheme from './styles/theme'
 
 export const metadata: Metadata = {
   title: 'VPN Manager',
   description: 'Gerecie suas ',
 }
-
 
 export default async function RootLayout({
   children,
@@ -27,7 +26,7 @@ export default async function RootLayout({
       <body>
         <SessionProvider session={session}>
           <AppRouterCacheProvider>
-          <CssBaseline  enableColorScheme />
+            <CssBaseline enableColorScheme />
             <ThemeProvider theme={getTheme}>
               <InitColorSchemeScript attribute="class" />
               {children}

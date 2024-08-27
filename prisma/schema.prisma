@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -20,7 +21,7 @@ model Account {
   id_token          String?
   session_state     String?
   createdAt         DateTime @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime @default(now())
   User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
@@ -35,21 +36,21 @@ model Client {
   vpnPassword     String
   coreVpnId       String
   createdAt       DateTime         @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime         @default(now())
   deletedAt       DateTime?
   CoreVpn         CoreVpn          @relation(fields: [coreVpnId], references: [id])
   clientNetworks  clientNetworks[]
 }
 
 model CoreVpn {
-  id        String    @id
+  id        String    @id @default(cuid())
   name      String
   ip        String
   port      Int
   user      String
   password  String
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @default(now())
   deletedAt DateTime?
   Client    Client[]
 }
@@ -59,18 +60,18 @@ model Session {
   userId       String
   expires      DateTime
   createdAt    DateTime @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime @default(now())
   User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(cuid())
   name          String
   email         String    @unique
   password      String
   role          Roles     @default(tecnical)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime
+  updatedAt     DateTime  @default(now())
   deletedAt     DateTime?
   emailVerified DateTime?
   Account       Account[]
@@ -86,13 +87,13 @@ model VerificationToken {
 }
 
 model clientNetworks {
-  id        String    @id
+  id        String    @id @default(cuid())
   name      String
   ip        String
   mask      String
   clientId  String
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @default(now())
   deletedAt DateTime?
   Client    Client    @relation(fields: [clientId], references: [id])
 }

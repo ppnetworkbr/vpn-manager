@@ -1,14 +1,11 @@
 'use client'
-import * as React from 'react';
+import { ProtectedLayout } from '@/app/components/layouts/protected'
+import * as React from 'react'
 
-
-
-
-
-export default function PersistentDrawerLeft() {
- 
-
+export default function UsersPage() {
   return (
- <h1>h1</h1>
-  );
+    <ProtectedLayout>
+      <h1>Users</h1>
+    </ProtectedLayout>
+  )
 }

@@ -119,7 +119,7 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
         </Box>
       </Box>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table  aria-label="sticky table">
+        <Table aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
