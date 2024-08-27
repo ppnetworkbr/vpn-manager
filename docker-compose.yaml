@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: my-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: dbdev
+      POSTGRES_USER: dbdev
+      POSTGRES_DB: dbdev
+      # POSTGRES_INITDB_OPTIONS: "--encoding=UTF8 --locale=en_US.utf8"
+      POSTGRES_INITDB_OPTIONS: "--encoding=UTF8"
+    restart: always
+
+volumes:
+  postgres_data:

@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime
+  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Client {
+  id              String           @id
+  name            String
+  vpnIp           String
+  vpnPreSharedKey String
+  vpnUser         String
+  vpnPassword     String
+  coreVpnId       String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime
+  deletedAt       DateTime?
+  CoreVpn         CoreVpn          @relation(fields: [coreVpnId], references: [id])
+  clientNetworks  clientNetworks[]
+}
+
+model CoreVpn {
+  id        String    @id
+  name      String
+  ip        String
+  port      Int
+  user      String
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  deletedAt DateTime?
+  Client    Client[]
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  password      String
+  role          Roles     @default(tecnical)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+  deletedAt     DateTime?
+  emailVerified DateTime?
+  Account       Account[]
+  Session       Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model clientNetworks {
+  id        String    @id
+  name      String
+  ip        String
+  mask      String
+  clientId  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  deletedAt DateTime?
+  Client    Client    @relation(fields: [clientId], references: [id])
+}
+
+enum Roles {
+  admin
+  tecnical
+}
