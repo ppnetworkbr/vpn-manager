@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <>
       <CssBaseline />
       <AppBar open={open} handleDrawerOpen={handleDrawerOpen} />
-      <Drawer open={open} handleDrawerClose={handleDrawerOpen} />
+      <Drawer open={open} />
       <MainContent open={open}>
         <DrawerHeader />
         {children} {/* Renderiza os filhos passados */}

@@ -1,26 +1,50 @@
+'use client'
 import * as React from 'react'
 import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import Divider from '@mui/material/Divider'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
 import DrawerHeader from '../drawer/drawerHeader'
 import { useTheme } from '@mui/material/styles'
 import { useMediaQuery } from '@mui/material'
+import {
+  PersonAdd,
+  Group,
+  Lan,
+  VpnKey,
+  ManageAccounts,
+} from '@mui/icons-material'
+import DrawerItem, { DrawerItemProps } from './drawerItem'
 
-export default function DrawerComponent({
-  open,
-  handleDrawerClose,
-}: {
-  open: boolean
-  handleDrawerClose: () => void
-}) {
+const menuitens: DrawerItemProps[] = [
+  {
+    Icon: Group,
+    title: 'Clientes',
+    itens: [
+      {
+        Icon: PersonAdd,
+        title: 'Geren. Clientes',
+        url: '/clients',
+      },
+      {
+        title: 'Redes',
+        Icon: Lan,
+        url: '/networks',
+      },
+    ],
+  },
+  {
+    Icon: VpnKey,
+    title: 'Core VPN',
+    url: '/core-vpn',
+  },
+  {
+    Icon: ManageAccounts,
+    title: 'Usuários',
+    url: '/users',
+  },
+]
+export default function DrawerComponent({ open }: { open: boolean }) {
   const theme = useTheme()
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'))
+
   return (
     <Drawer
       sx={{
@@ -36,33 +60,9 @@ export default function DrawerComponent({
       open={open}
     >
       <DrawerHeader />
-
-      <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      {menuitens.map((item) => (
+        <DrawerItem key={item.title} {...item} />
+      ))}
     </Drawer>
   )
 }

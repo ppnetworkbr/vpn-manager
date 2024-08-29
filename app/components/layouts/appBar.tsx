@@ -1,15 +1,23 @@
 import MenuIcon from '@mui/icons-material/Menu'
-import { IconButton, Typography } from '@mui/material'
+import { IconButton, Box } from '@mui/material'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
+import logoImage from '@/app/assets/logo.svg'
+import Image from 'next/image'
+import MenuProfile from './appBar/menuProfile'
+import AutoComplete from './appBar/autoComplete'
+import { findManyClients } from '@/lib/actions/client.db.action'
+import { GetServerSideProps } from 'next'
 
 export default function AppBar({
   open,
   handleDrawerOpen,
+  clients,
 }: {
   open: boolean
   handleDrawerOpen: () => void
+  clients: any[]
 }) {
   interface AppBarProps extends MuiAppBarProps {
     open?: boolean
@@ -34,6 +42,7 @@ export default function AppBar({
       },
     ],
   }))
+
   return (
     <AppBar
       position="fixed"
@@ -42,24 +51,74 @@ export default function AppBar({
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
-          sx={[
-            {
-              mr: 2,
-            },
-          ]}
+      <Toolbar
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexDirection: 'row',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+          }}
         >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" noWrap component="div">
-          Persistent drawer
-        </Typography>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={[
+              {
+                mr: 2,
+              },
+            ]}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <Image src={logoImage} alt="" />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <AutoComplete
+            optionSelect={clients}
+            error={undefined}
+            label="Clientes"
+            noOptionText="Nenhum cliente encontrado"
+            onChange={(e) => console.log('e', e)}
+            value={null}
+            placeholder="Buscar cliente"
+          />
+          <MenuProfile />
+        </Box>
       </Toolbar>
     </AppBar>
   )
+}
+export const getServerSideProps: GetServerSideProps = async () => {
+  const clients = await findManyClients({})
+  console.log('clients', clients)
+  return {
+    props: {
+      clients,
+    },
+  }
 }
