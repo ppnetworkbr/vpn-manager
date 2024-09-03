@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import DashboardLayout from './dashboardLayout'
 type Props = {
-  children: React.ReactElement
+  children: React.ReactElement | React.ReactElement[]
 }
 
 /*
@@ -30,9 +30,6 @@ export const ProtectedLayout = ({ children }: Props): JSX.Element => {
     // if the user is not authorized, redirect to the login page
     // with a return url to the current page
     if (unAuthorized) {
-      console.log('not authorized')
-      console.log('router', router)
-      console.log('usePathname', patchName)
       router.push('/login?returnUrl=' + patchName)
     }
   }, [loading, unAuthorized, sessionStatus, router, patchName])

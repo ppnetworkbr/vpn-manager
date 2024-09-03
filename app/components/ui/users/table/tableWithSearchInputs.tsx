@@ -12,16 +12,23 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
+  Paper,
 } from '@mui/material'
 import { Search, Delete, Edit } from '@mui/icons-material'
-import React, { useState, ChangeEvent } from 'react'
-// import { DeleteConfirmDialog } from 'src/components/shared/deleteConfirm'
-// import { useModalEditClientContextContext } from 'src/contexts/pages/client/modalEditClientContext'
+import { alpha } from '@mui/material/styles'
 
-// import ModalEditProduct from '../modalEditClient'
+import React, { useState, ChangeEvent } from 'react'
 import StyledNoRows from './styledNoRows'
 import { DataProps } from './@types/table'
+import { grey } from '@mui/material/colors'
+import { DeleteConfirmDialog } from '../deleteConfirm'
+import UserEditModal from '../editUser/editUser'
+import { Roles, User } from '@prisma/client'
 
+interface EditModalProps {
+  open: boolean
+  user: User
+}
 interface ColumnProps {
   id: 'name' | 'email' | 'role' | 'action'
   label: string
@@ -56,14 +63,22 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
     },
   ]
   const [page, setPage] = useState(0)
+
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [search, setSearch] = useState('')
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
     message: '',
-    deleteEndpoint: '',
+    id: '',
     title: '',
   })
+  const [editModal, setEditModal] = useState<EditModalProps>(
+    {} as EditModalProps,
+  )
+
+  const handleCloseEditModal = () => {
+    setEditModal({ open: false, user: {} as User })
+  }
   const filteredData = users.filter((user) => {
     return (
       user.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -80,12 +95,12 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
   }
 
   function handleDelete(id: string, name: string) {
+    console.log(id, name)
     setDeleteDialog({
       open: true,
       message: `Deseja realmente deletar o ${name}?`,
-
-      deleteEndpoint: `/clients/${id}`,
-      title: `Deletar cliente ${name}?`,
+      id: `${id}`,
+      title: `Deletar usuário ${name}?`,
     })
   }
   function handleSearch(value: string) {
@@ -93,172 +108,205 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
   }
 
   function handleEditClick(data: DataProps) {
-    // abrir modal de editar
+    setEditModal({
+      open: true,
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        password: '',
+        role: data.role === 'admin' ? Roles.admin : Roles.technical,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        deletedAt: data.deletedAt,
+        emailVerified: data.emailVerified,
+      },
+    })
   }
 
   return (
-    <Box sx={{ width: '100%', overflow: 'hidden' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexDirection: 'row',
-          py: '0.5rem',
-          pr: '0.5rem',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-          <TextField
-            id="input-with-sx"
-            label={'Pesquisar'}
-            variant="standard"
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-          <Search sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+    <Paper
+      sx={{
+        mt: '1rem',
+      }}
+    >
+      <Box sx={{ width: '100%', overflow: 'hidden' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            flexDirection: 'row',
+            py: '0.5rem',
+            pr: '0.5rem',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            <TextField
+              id="input-with-sx"
+              label={'Pesquisar'}
+              variant="standard"
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <Search sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+          </Box>
         </Box>
-      </Box>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                  sx={{
-                    mr: column.id === 'action' ? '2rem' : '0',
-                  }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          {filteredData.length === 0 ? (
-            <TableBody>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    textAlign: 'center',
-                  }}
-                  colSpan={6}
-                >
-                  <StyledNoRows />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          ) : (
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    {columns.map((column) => {
-                      const value = row[column.id]
-                      switch (column.id) {
-                        case 'role':
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {value === 'admin' ? 'Administrador' : 'Técnico'}
-                            </TableCell>
-                          )
-                        case 'email':
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {value}
-                            </TableCell>
-                          )
-                        case 'name':
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {value}
-                            </TableCell>
-                          )
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table
+            aria-label="sticky table"
+            stickyHeader
+            sx={{
+              opacity: filteredData.length === 0 ? 0.5 : 1,
+              // colocar fundo mais escuro no hea do table  sx={{
 
-                        default:
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  gap: '0.5rem',
-                                  justifyContent: 'center',
-                                }}
-                              >
-                                <Tooltip
-                                  title={'deletar'}
-                                  onClick={() => {
-                                    handleDelete(row.id, row.name)
-                                  }}
-                                >
-                                  <IconButton>
-                                    <Delete
-                                      sx={{
-                                        color: 'error.light',
-                                      }}
-                                    />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip
-                                  title={'editar'}
-                                  onClick={() => {
-                                    handleEditClick(row)
-                                  }}
-                                >
-                                  <IconButton>
-                                    <Edit
-                                      sx={{
-                                        color: 'primary.main',
-                                      }}
-                                    />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
-                            </TableCell>
-                          )
-                      }
-                    })}
-                  </TableRow>
+              '& th': {
+                backgroundColor: alpha(grey[100], 0.9),
+              },
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                    sx={{
+                      mr: column.id === 'action' ? '2rem' : '0',
+                    }}
+                  >
+                    {column.label}
+                  </TableCell>
                 ))}
-            </TableBody>
-          )}
-        </Table>
-      </TableContainer>
-      <TablePagination
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-          width: '100%',
-        }}
-        labelRowsPerPage={'Itens por página'}
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}-${to} de ${count}`
-        }
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={filteredData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        getItemAriaLabel={(type) =>
-          `Ir para ${type === 'next' ? 'Próxima página' : 'Página anterior'}`
-        }
-      />
-      {/* <DeleteConfirmDialog
-        messageError="Erro ao deletar o cliente"
-        messageSuccess="Cliente deletado com sucesso"
-        open={deleteDialog.open}
-        title={deleteDialog.title}
-        deleteEndpoint={deleteDialog.deleteEndpoint}
-        onClose={() => setDeleteDialog({ ...deleteDialog, open: false })}
-        message={deleteDialog.message}
-        updateData={updateData}
-      />
-      <ModalEditProduct /> */}
-    </Box>
+              </TableRow>
+            </TableHead>
+            {filteredData.length === 0 ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      textAlign: 'center',
+                    }}
+                    colSpan={6}
+                  >
+                    <StyledNoRows />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                      {columns.map((column) => {
+                        const value = row[column.id]
+                        switch (column.id) {
+                          case 'role':
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {value === 'admin'
+                                  ? 'Administrador'
+                                  : 'Técnico'}
+                              </TableCell>
+                            )
+                          case 'email':
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {value}
+                              </TableCell>
+                            )
+                          case 'name':
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {value}
+                              </TableCell>
+                            )
+
+                          default:
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    gap: '0.5rem',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <Tooltip
+                                    title={'deletar'}
+                                    onClick={() => {
+                                      handleDelete(row.id, row.name)
+                                    }}
+                                  >
+                                    <IconButton>
+                                      <Delete
+                                        sx={{
+                                          color: 'error.light',
+                                        }}
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Tooltip
+                                    title={'editar'}
+                                    onClick={() => {
+                                      handleEditClick(row)
+                                    }}
+                                  >
+                                    <IconButton>
+                                      <Edit
+                                        sx={{
+                                          color: 'primary.main',
+                                        }}
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
+                              </TableCell>
+                            )
+                        }
+                      })}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            )}
+          </Table>
+        </TableContainer>
+        <TablePagination
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            width: '100%',
+          }}
+          labelRowsPerPage={'Itens por página'}
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}-${to} de ${count}`
+          }
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          getItemAriaLabel={(type) =>
+            `Ir para ${type === 'next' ? 'Próxima página' : 'Página anterior'}`
+          }
+        />
+        <DeleteConfirmDialog
+          open={deleteDialog.open}
+          title={deleteDialog.title}
+          id={deleteDialog.id}
+          onClose={() => setDeleteDialog({ ...deleteDialog, open: false })}
+          message={deleteDialog.message}
+        />
+        <UserEditModal
+          isOpenModal={editModal.open}
+          user={editModal.user}
+          closeModal={handleCloseEditModal}
+        />
+      </Box>
+    </Paper>
   )
 }

@@ -1,11 +1,14 @@
-'use client'
+import getUsers from '@/app/actions/getUsers'
 import { ProtectedLayout } from '@/app/components/layouts/protected'
-import * as React from 'react'
+import AddUser from '@/app/components/ui/users/addUser/addUser'
+import TableWithSearchBox from '@/app/components/ui/users/table/tableWithSearchInputs'
 
-export default function UsersPage() {
+export default async function UserPage() {
+  const users = await getUsers()
   return (
     <ProtectedLayout>
-      <h1>Users</h1>
+      <AddUser />
+      <TableWithSearchBox users={users} />
     </ProtectedLayout>
   )
 }

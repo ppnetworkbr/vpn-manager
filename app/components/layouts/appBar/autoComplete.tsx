@@ -44,9 +44,6 @@ export default function AutoComplete({
           md: '100%',
           lg: '23.125rem',
         },
-        minWidth: {
-          md: '19.125rem',
-        },
       }}
       getOptionLabel={(option) => option.name}
       getOptionDisabled={(option) => !option.active || false}
