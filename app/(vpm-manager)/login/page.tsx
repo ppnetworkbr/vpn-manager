@@ -28,7 +28,6 @@ export default function LoginPage() {
   const paramsRedirect = useSearchParams().get('returnUrl')
   const onSubmit = async (data: LoginSchema) => {
     setLoginError(null) // Reset login error
-    console.log(data)
     const res = await signIn('credentials', {
       email: data.email,
       password: data.password,

@@ -79,12 +79,7 @@ export default function MenuProfile() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Stack
-          sx={{ width: 290 }}
-          onClick={() => {
-            console.log('clicou pefil')
-          }}
-        >
+        <Stack sx={{ width: 290 }}>
           <Stack
             direction="row"
             sx={{

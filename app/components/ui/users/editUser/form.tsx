@@ -46,7 +46,6 @@ export default function UserEditForm({
   async function onSubmit(dataForm: userSchemaInputs) {
     const [, err] = await execute(dataForm)
     if (err) {
-      console.log(err)
       if (err.name === 'ZodError') {
         if (err.fieldErrors) {
           Object.keys(err.fieldErrors).forEach((field) => {

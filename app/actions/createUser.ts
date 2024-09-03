@@ -29,7 +29,7 @@ export const createUserAction = createServerAction()
       throw new ZSAError('CONFLICT', 'Email já cadastrado')
     }
     const passwordHash = await hash(input.password, 10)
-    console.log(passwordHash)
+
     await createUser({
       name: input.name,
       email: input.email,

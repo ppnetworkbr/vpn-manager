@@ -95,7 +95,6 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
   }
 
   function handleDelete(id: string, name: string) {
-    console.log(id, name)
     setDeleteDialog({
       open: true,
       message: `Deseja realmente deletar o ${name}?`,

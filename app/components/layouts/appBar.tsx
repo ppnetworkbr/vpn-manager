@@ -12,8 +12,6 @@ import { styled } from '@mui/material/styles'
 import logoImage from '@/app/assets/logo.svg'
 import Image from 'next/image'
 import MenuProfile from './appBar/menuProfile'
-import { findManyClients } from '@/lib/actions/client.db.action'
-import { GetServerSideProps } from 'next'
 
 export default function AppBar({
   open,
@@ -132,14 +130,4 @@ export default function AppBar({
       </Toolbar>
     </AppBar>
   )
-}
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const clients = await findManyClients({})
-  console.log('clients', clients)
-  return {
-    props: {
-      clients,
-    },
-  }
 }

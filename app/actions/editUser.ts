@@ -23,7 +23,7 @@ export const editUserAction = createServerAction()
   )
   .handler(async ({ input }) => {
     const existUser = await findUser({ email: input.email })
-    console.log(existUser, 'idasidiasi', input)
+
     if (!existUser) {
       throw new ZSAError('NOT_FOUND', 'Usuário não encontrado')
     }
