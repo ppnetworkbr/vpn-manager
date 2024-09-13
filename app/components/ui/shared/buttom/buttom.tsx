@@ -4,16 +4,22 @@ import React from 'react'
 interface ButtonWithIconProps {
   title: string
   icon?: React.ReactNode
+  disabled?: boolean
+  handleClickOpen: () => void
 }
 
-export default function ButtonWithIcon({ title, icon }: ButtonWithIconProps) {
-  function handleClickOpen() {}
-
+export default function ButtonWithIcon({
+  title,
+  icon,
+  disabled = false,
+  handleClickOpen,
+}: ButtonWithIconProps) {
   return (
     <Button
       onClick={handleClickOpen}
       startIcon={icon}
-      variant="contained"
+      disabled={disabled}
+      variant="outlined"
       sx={{
         fontSize: {
           xs: '0.8rem',
