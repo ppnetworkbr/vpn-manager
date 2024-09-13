@@ -8,7 +8,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 
 import { auth } from '@/auth'
 import { ThemeProvider } from '@mui/material/styles'
-import getTheme from './styles/theme'
+import getTheme from '@/app/styles/theme'
 
 export const metadata: Metadata = {
   title: 'VPN Manager',
