@@ -10,14 +10,21 @@ import {
   Lan,
   VpnKey,
   ManageAccounts,
+  Home,
 } from '@mui/icons-material'
 import DrawerItem, { DrawerItemProps } from './drawerItem'
 
 const menuitens: DrawerItemProps[] = [
   {
+    Icon: Home,
+    title: 'Home',
+    url: '/',
+  },
+  {
     Icon: Group,
     title: 'Clientes',
     itens: [
+     
       {
         Icon: PersonAdd,
         title: 'Geren. Clientes',
@@ -26,7 +33,7 @@ const menuitens: DrawerItemProps[] = [
       {
         title: 'Redes',
         Icon: Lan,
-        url: '/networks',
+        url: '/clients/networks',
       },
     ],
   },
