@@ -30,6 +30,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
+    "ssh2": "^1.15.0",
     "zod": "^3.23.8",
     "zsa": "^0.6.0",
     "zsa-react": "^0.2.2"
@@ -40,9 +41,11 @@
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/ssh2": "^1.15.1",
     "bcryptjs": "^2.4.3",
     "eslint": "^8.0.0",
     "eslint-config-next": "14.2.7",
+    "file-loader": "^6.2.0",
     "prisma": "^5.19.0",
     "typescript": "^5"
   }
