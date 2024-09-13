@@ -30,7 +30,6 @@ export default function AutoComplete({
   noOptionText,
   disabled,
 }: FormComponentsProps) {
-
   return (
     <Autocomplete
       options={optionSelect}
