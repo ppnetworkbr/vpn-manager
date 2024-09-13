@@ -47,7 +47,7 @@ model CoreVpn {
   name      String
   ip        String
   port      Int
-  user      String
+  username  String
   password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
@@ -72,6 +72,7 @@ model User {
   role          Roles     @default(technical)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
+  l2tpPassword  String?
   deletedAt     DateTime?
   emailVerified DateTime?
   Account       Account[]

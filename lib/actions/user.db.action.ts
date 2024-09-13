@@ -1,5 +1,5 @@
 'use server'
-import { Prisma } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 import { db as prisma } from '../db'
 
 export const createUser = async (data: Prisma.UserCreateManyInput) => {
@@ -31,10 +31,14 @@ export const findUser = async (where: Prisma.UserWhereUniqueInput) => {
 }
 
 export async function findManyUsers(where: Prisma.UserWhereInput) {
-  return await prisma.user.findMany({
-    where,
-    omit: {
-      password: true,
-    },
-  })
+  try {
+    return await prisma.user.findMany({
+      where,
+      omit: {
+        password: true,
+      },
+    })
+  } catch (error) {
+    return [{}] as User[]
+  }
 }

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
 const { hashSync } = require('bcrypt')
 const { PrismaClient } = require('@prisma/client')
 
@@ -8,6 +9,7 @@ async function main() {
   const user = {
     email: 'admins@localhost.com',
     password: hashSync('admin', 10),
+
     name: 'admin',
     role: 'admin',
   }
@@ -19,7 +21,10 @@ async function main() {
   if (existingUser) {
     await prisma.user.update({
       where: { id: existingUser.id },
-      data: user,
+      data: {
+        ...user,
+        l2tpPassword: Math.random().toString(36).slice(-8),
+      },
     })
   } else {
     await prisma.user.create({ data: user })
