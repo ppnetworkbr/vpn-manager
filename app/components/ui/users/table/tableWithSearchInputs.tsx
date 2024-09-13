@@ -21,8 +21,8 @@ import React, { useState, ChangeEvent } from 'react'
 import StyledNoRows from './styledNoRows'
 import { DataProps } from './@types/table'
 import { grey } from '@mui/material/colors'
-import { DeleteConfirmDialog } from '../deleteConfirm'
-import UserEditModal from '../editUser/editUser'
+import { DeleteConfirmDialog } from '@/app/components/ui/users/deleteConfirm'
+import UserEditModal from '@/app/components/ui/users/editUser/editUser'
 import { Roles, User } from '@prisma/client'
 
 interface EditModalProps {
@@ -79,13 +79,17 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
   const handleCloseEditModal = () => {
     setEditModal({ open: false, user: {} as User })
   }
-  const filteredData = users.filter((user) => {
-    return (
-      user.email.toLowerCase().includes(search.toLowerCase()) ||
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.role.includes(search)
-    )
-  })
+  console.log(users)
+  const filteredData =
+    users && users.length > 0
+      ? users.filter((user) => {
+          return (
+            user.email.toLowerCase().includes(search.toLowerCase()) ||
+            user.name.toLowerCase().includes(search.toLowerCase()) ||
+            user.role.includes(search)
+          )
+        })
+      : []
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
   }
@@ -114,6 +118,7 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
         name: data.name,
         email: data.email,
         password: '',
+        l2tpPassword: '',
         role: data.role === 'admin' ? Roles.admin : Roles.technical,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,

@@ -17,8 +17,7 @@ const userSchema = z.object({
     message: 'Senha deve ter no mínimo 6 caracteres',
   }),
   role: z.nativeEnum(Roles, {
-    errorMap: () => (
-      { message: 'Permissão inválida' }),
+    errorMap: () => ({ message: 'Permissão inválida' }),
   }),
 })
 interface userSchemaInputs extends z.infer<typeof userSchema> {}
