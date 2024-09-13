@@ -25,6 +25,7 @@ declare module 'next-auth' {
     role: Roles
   }
 }
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -52,7 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new InvalidLoginError('Usuário e/ou senha incorretos')
         }
 
-        const matchPassword = bcrypt.compare(password, user.password)
+        const matchPassword = await bcrypt.compare(password, user.password)
         if (!matchPassword) throw new Error('Usuário e/ou senha incorretos')
 
         return user
@@ -61,6 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 1 * 24 * 60 * 60,
   },
   callbacks: {
     jwt({ token, user }) {
