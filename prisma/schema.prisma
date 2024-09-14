@@ -28,17 +28,15 @@ model Account {
 }
 
 model Client {
-  id              String           @id
+  id              String           @id @default(cuid())
   name            String
-  vpnIp           String
+  vpnIp           String           @unique
   vpnPreSharedKey String
   vpnUser         String
   vpnPassword     String
-  coreVpnId       String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @default(now())
   deletedAt       DateTime?
-  CoreVpn         CoreVpn          @relation(fields: [coreVpnId], references: [id])
   clientNetworks  clientNetworks[]
 }
 
@@ -52,7 +50,6 @@ model CoreVpn {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
   deletedAt DateTime?
-  Client    Client[]
 }
 
 model Session {
