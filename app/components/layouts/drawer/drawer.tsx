@@ -24,7 +24,6 @@ const menuitens: DrawerItemProps[] = [
     Icon: Group,
     title: 'Clientes',
     itens: [
-     
       {
         Icon: PersonAdd,
         title: 'Geren. Clientes',

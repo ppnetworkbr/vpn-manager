@@ -17,9 +17,19 @@ export const checkAllConfigs = createServerAction().handler(async () => {
       try {
         await mikrotik.connect()
         const data = await mikrotik.getL2TPUsers()
-        mikrotik.disconnect()
         if (data?.length === 0 || !data) {
-          console.log('Nenhum usuário encontrado')
+          //criar usuario l2tp no mikrotik
+          for (const user of users) {
+            if(!user.l2tpPassword) 
+              continue
+            await mikrotik.connect()
+            await mikrotik.createL2TPUser({
+              username: user.email,
+              password: user.l2tpPassword,
+            })
+          
+          }
+          mikrotik.disconnect()
         }else{
           
         }
@@ -30,10 +40,15 @@ export const checkAllConfigs = createServerAction().handler(async () => {
         } else if ((error as { level?: string }).level === 'client-timeout') {
           throw new ZSAError('TIMEOUT', 'Tempo de conexão excedido')
         } else {
-          throw new ZSAError('ERROR', 'Erro ao conectar')
-        }
-      }
-    }
+        
+         if ((error as Error).message === 'Profile não encontrado no mikrotik') {
+          throw new ZSAError('NOT_FOUND', (error as Error).message)
+         }
+    
+  }
+}
+}
+
   } else {
     for (const user of usersWithoutL2tpPassword) {
       await updateUser(

@@ -17,8 +17,8 @@ export const deleteCoreVpnAction = createServerAction()
     },
   )
   .handler(async ({ input }) => {
-    const existUser = await findCoreVpnWithUnique({ id: input.id })
-    if (!existUser) {
+    const existCore = await findCoreVpnWithUnique({ id: input.id })
+    if (!existCore) {
       throw new ZSAError('NOT_FOUND', 'Core não encontrado')
     }
     await deleteCoreVpn({
