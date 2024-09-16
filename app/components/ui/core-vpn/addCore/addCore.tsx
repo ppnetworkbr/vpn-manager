@@ -31,12 +31,11 @@ export default function AddCoreVpn() {
     setModalOpen(toastData)
   }
   async function handleClickSyncCofig() {
-    const [data, error] = await execute()
-    console.log(data, error, 'data')
+    const [, error] = await execute()
     if (error) {
       setModalOpen({
         open: true,
-        message: 'Erro ao sincronizar configurações',
+        message: error.message,
         variant: 'error',
       })
     } else {
