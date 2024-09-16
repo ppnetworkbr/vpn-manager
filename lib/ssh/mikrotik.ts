@@ -39,7 +39,7 @@ export class MikrotikManager {
 
   async executeCommand(command: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      this.ssh.exec(command, (err, stream) => {
+      this.ssh.exec(command, {}, (err, stream) => {
         console.debug(command)
 
         if (err) {
@@ -59,7 +59,7 @@ export class MikrotikManager {
           .on('close', () => {
             if (output.trim() === '') {
               console.debug(`Comando '${command}' não retornou saída`)
-              reject(new Error('Comando não retornou saída'))
+              resolve([])
               return
             }
             const lines = output.trim().split('\n')
@@ -75,17 +75,31 @@ export class MikrotikManager {
     })
   }
 
-  async createL2TPUser(username: string, password: string) {
-    const command = `/ppp/secret/add name=${username} password=${password} service=l2tp profile=default`
-    await this.executeCommand(command)
+  async createL2TPUser({
+    password,
+    username,
+  }: {
+    username: string
+    password: string
+  }) {
+    const command = `ppp secret add name=${username} password=${password} profile=VPN-MANAGER comment=VPN-MANAGER-${username} service=l2tp`
+    const result = await this.executeCommand(command)
+    // reuslto [ 'input does not match any value of profile' ]
+
+    if (result[0] === 'input does not match any value of profile') {
+      throw new Error('Profile não encontrado no mikrotik')
+    }
+    console.log(result, 'result do criar usuario ')
   }
 
   async getL2TPUsers(): Promise<getL2tpUser[] | []> {
-    const command = 'ppp secret print'
+    const command = 'ppp secret print where comment ~"VPN-MANAGER"'
     let lines: string[]
     try {
       lines = await this.executeCommand(command)
+      // remover linhas com comentario
 
+      lines = lines.filter((line) => !line.includes(';;; VPN-MANAGER-'))
       const headerIndex = lines.findIndex(
         (line) => line.includes('NAME') && line.includes('SERVICE'),
       )
@@ -98,14 +112,12 @@ export class MikrotikManager {
 
       columnNames.splice(columnNames.indexOf('CALLER-ID'), 1)
       columnNames.splice(columnNames.indexOf('REMOTE-ADDRESS'), 1)
-
       const userLines = lines
         .slice(headerIndex + 1)
         .filter((line) => line.trim() !== '')
       const users = userLines.map((line) => {
-        // igorar o primeiro valor, que é o número da linha
-
         const values = line.trim().split(/\s+/)
+        console.log(values, 'values')
         // Garantir que haja valores suficientes para todas as colunas,
         // mesmo se houver espaços em branco no final da linha
         while (values.length < columnNames.length) {
@@ -118,20 +130,25 @@ export class MikrotikManager {
         }
 
         const userData: getL2tpUser = {
-          idMikrotik: values[0],
-          name: values[1],
-          service: values[2],
-          password: values[3],
-          profile: values[4],
+          name: values[0],
+          service: values[1],
+          password: values[2],
+          profile: values[3],
         }
 
         return userData
       })
+      console.log(users, 'users')
       return users
     } catch (error) {
       throw new Error(`Erro ao obter usuários L2TP: ${error}`)
     }
     // Encontrar o índice da linha que contém os cabeçalhos da tabela
+  }
+
+  async deleteL2TPUser(username: string) {
+    const command = `ppp secret remove ${username}`
+    await this.executeCommand(command)
   }
   // ... adapte os demais métodos para utilizar executeCommand
 }

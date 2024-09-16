@@ -17,22 +17,30 @@ export const checkAllConfigs = createServerAction().handler(async () => {
       try {
         await mikrotik.connect()
         const data = await mikrotik.getL2TPUsers()
-        if (data?.length === 0 || !data) {
-          //criar usuario l2tp no mikrotik
+        if (data.length > 0) {
           for (const user of users) {
-            if(!user.l2tpPassword) 
-              continue
-            await mikrotik.connect()
+            await mikrotik.deleteL2TPUser(user.email)
+          }
+        }
+
+        // criar usuario l2tp no mikrotik
+
+        for (const user of users) {
+          if (!user.l2tpPassword) {
+            continue
+          }
+          try {
             await mikrotik.createL2TPUser({
               username: user.email,
               password: user.l2tpPassword,
             })
-          
+          } catch (error) {
+            throw new ZSAError('NOT_FOUND', (error as Error).message)
           }
-          mikrotik.disconnect()
-        }else{
-          
         }
+        /// etapa para criar as vpns e ip list dos clientes
+
+        mikrotik.disconnect()
       } catch (error) {
         await mikrotik.disconnect()
         if ((error as { level?: string }).level === 'client-authentication') {
@@ -40,15 +48,14 @@ export const checkAllConfigs = createServerAction().handler(async () => {
         } else if ((error as { level?: string }).level === 'client-timeout') {
           throw new ZSAError('TIMEOUT', 'Tempo de conexão excedido')
         } else {
-        
-         if ((error as Error).message === 'Profile não encontrado no mikrotik') {
-          throw new ZSAError('NOT_FOUND', (error as Error).message)
-         }
-    
-  }
-}
-}
-
+          if (
+            (error as Error).message === 'Profile não encontrado no mikrotik'
+          ) {
+            throw new ZSAError('NOT_FOUND', (error as Error).message)
+          }
+        }
+      }
+    }
   } else {
     for (const user of usersWithoutL2tpPassword) {
       await updateUser(
