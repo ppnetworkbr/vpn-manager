@@ -40,8 +40,6 @@ export class MikrotikManager {
   async executeCommand(command: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
       this.ssh.exec(command, {}, (err, stream) => {
-        console.debug(command)
-
         if (err) {
           reject(new Error(`Erro ao executar o comando: ${err.message}`))
           return
@@ -58,7 +56,6 @@ export class MikrotikManager {
         stream
           .on('close', () => {
             if (output.trim() === '') {
-              console.debug(`Comando '${command}' não retornou saída`)
               resolve([])
               return
             }
@@ -89,7 +86,6 @@ export class MikrotikManager {
     if (result[0] === 'input does not match any value of profile') {
       throw new Error('Profile não encontrado no mikrotik')
     }
-    console.log(result, 'result do criar usuario ')
   }
 
   async getL2TPUsers(): Promise<getL2tpUser[] | []> {
@@ -117,7 +113,7 @@ export class MikrotikManager {
         .filter((line) => line.trim() !== '')
       const users = userLines.map((line) => {
         const values = line.trim().split(/\s+/)
-        console.log(values, 'values')
+
         // Garantir que haja valores suficientes para todas as colunas,
         // mesmo se houver espaços em branco no final da linha
         while (values.length < columnNames.length) {
@@ -138,7 +134,7 @@ export class MikrotikManager {
 
         return userData
       })
-      console.log(users, 'users')
+
       return users
     } catch (error) {
       throw new Error(`Erro ao obter usuários L2TP: ${error}`)
@@ -150,5 +146,158 @@ export class MikrotikManager {
     const command = `ppp secret remove ${username}`
     await this.executeCommand(command)
   }
-  // ... adapte os demais métodos para utilizar executeCommand
+
+  async createIpAddressList(network: string, client: string) {
+    const command = `ip firewall address-list add address=${network} list=VPN-MANAGER-${client} comment=VPN-MANAGER-${client}`
+    const result = await this.executeCommand(command)
+    if (result[0] === 'input does not match any value of list') {
+      throw new Error('Lista não encontrada no mikrotik')
+    }
+  }
+
+  async removeIpAddressList(number: number) {
+    const command = `ip firewall address-list remove ${number}`
+    await this.executeCommand(command)
+  }
+
+  async getIpAddressList() {
+    const command = 'ip firewall address-list print where comment ~"VPN-MANAGER"'
+    let lines: string[]
+    lines = await this.executeCommand(command)
+    lines = lines.filter((line) => !line.includes(';;; VPN-MANAGER-'))
+    const headerIndex = lines.findIndex(
+      (line) => line.includes('ADDRESS') && line.includes('LIST'),
+    )
+
+    if (headerIndex === -1) {
+      throw new Error('Formato da tabela de endereços inválido')
+    }
+
+    const columnNames = lines[headerIndex].trim().split(/\s+/)
+
+    columnNames.splice(columnNames.indexOf('COMMENT'), 1)
+    const ipListLines = lines
+      .slice(headerIndex + 1)
+      .filter((line) => line.trim() !== '')
+    const ipList = ipListLines.map((line) => {
+      const values = line.trim().split(/\s+/)
+
+      // Garantir que haja valores suficientes para todas as colunas,
+      // mesmo se houver espaços em branco no final da linha
+      while (values.length < columnNames.length) {
+        values.push('')
+      }
+
+      // Remover espaços em branco extras do final do último valor (PROFILE)
+      if (values.length > 0) {
+        values[values.length - 1] = values[values.length - 1].trim()
+      }
+
+      const ipData = {
+        list: values[0],
+        network: values[1],
+      }
+
+      return ipData
+    })
+
+    return ipList
+  }
+
+  async createVpnClient({
+    ip,
+    username,
+    preSharedKey,
+    password,
+    ipSrcAddress,
+    name,
+  }: {
+    ip: string
+    ipSrcAddress:string
+    username: string
+    preSharedKey: string
+    password: string
+    name: string
+  }) {
+    const command = `interface l2tp-client add connect-to=${ip} user=${username} password=${password} comment=VPN-MANAGER name=VPN-MANAGER-${name} ipsec-secret=${preSharedKey} use-ipsec=yes disabled=no src-address=${ipSrcAddress} dial-on-demand=yes`
+    await this.executeCommand(command)
+  }
+
+  async removeVpnClient(name: string) {
+    const command = `interface l2tp-client remove ${name}`
+    await this.executeCommand(command)
+  }
+
+  async createIpRoute({name}: {name: string}) {
+    const command = `ip route add gateway=VPN-MANAGER-${name} dst-address=0.0.0.0/0 routing-mark=VPN-MANAGER-${name} comment=VPN-MANAGER`
+    await this.executeCommand(command)
+  }
+
+  async removeIpRoute(number: number) {
+    const command = `ip route remove ${number}`
+    await this.executeCommand(command)
+  }
+
+  async getIpRoute() {
+
+    const command = 'ip route print where comment ~"VPN-MANAGER"'
+    let lines: string[]
+    lines = await this.executeCommand(command)
+    lines = lines.filter((line) => !line.includes(';;; VPN-MANAGER'))
+    const headerIndex = lines.findIndex(
+      (line) => line.includes('GATEWAY') && line.includes('DST-ADDRESS'),
+    )
+
+    if (headerIndex === -1) {
+      throw new Error('Formato da tabela de rotas inválido')
+    }
+
+    const columnNames = lines[headerIndex].trim().split(/\s+/)
+
+    columnNames.splice(columnNames.indexOf('COMMENT'), 1)
+    const ipRouteLines = lines
+      .slice(headerIndex + 1)
+      .filter((line) => line.trim() !== '')
+    const ipRoute = ipRouteLines.map((line) => {
+      const values = line.trim().split(/\s+/)
+
+      // Garantir que haja valores suficientes para todas as colunas,
+      // mesmo se houver espaços em branco no final da linha
+      while (values.length < columnNames.length) {
+        values.push('')
+      }
+
+      // Remover espaços em branco extras do final do último valor (PROFILE)
+      if (values.length > 0) {
+        values[values.length - 1] = values[values.length - 1].trim()
+      }
+
+      const ipData = {
+        gateway: values[1],
+        dstAddress: values[0],
+      }
+      return ipData
+    })
+    return ipRoute
+  }
+
+  async createIpNat({name}: {name: string}) {
+    const command = `ip firewall nat add chain=srcnat action=masquerade out-interface=VPN-MANAGER-${name} comment=VPN-MANAGER`
+    await this.executeCommand(command)
+  }
+
+  async removeIpNat(number: number) {
+    const command = `ip firewall nat remove ${number}`
+    await this.executeCommand(command)
+  }
+
+  async getIpNatLines() {
+    const command = 'ip firewall nat print where comment ~"VPN-MANAGER"'
+    let lines: string[]
+    lines = await this.executeCommand(command)
+    lines = lines.filter((line) => !line.includes(';;;'))
+    lines = lines.filter((line) => !line.includes('Flags: X - disabled'))
+    lines = lines.filter((line) => line !== '\r')
+   return lines.length
+  }
 }
