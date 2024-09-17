@@ -32,6 +32,7 @@ model Client {
   name            String
   vpnIp           String           @unique
   vpnPreSharedKey String
+  ipSourceAddress String
   vpnUser         String
   vpnPassword     String
   createdAt       DateTime         @default(now())
@@ -87,8 +88,7 @@ model VerificationToken {
 model clientNetworks {
   id        String    @id @default(cuid())
   name      String
-  ip        String
-  mask      String
+  network   String
   clientId  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
