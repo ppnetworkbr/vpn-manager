@@ -12,9 +12,11 @@ export const createCoreVpnAction = createServerAction()
       ip: z.string().ip({
         message: 'IP inválido',
       }),
+      ipSourceAddress: z.string().ip({ message: 'IP inválido' }).optional(),
       password: z.string().min(6, {
         message: 'Senha deve ter no mínimo 6 caracteres',
       }),
+
       username: z.string().min(2, {
         message: 'Nome de usuário deve ter no mínimo 2 caracteres',
       }),

@@ -24,24 +24,33 @@ export const editClientAction = createServerAction()
       vpnUser: z.string().min(2, {
         message: 'Nome de usuário deve ter no mínimo 2 caracteres',
       }),
+      ipSourceAddress: z.string().ip({
+        message: 'IP inválido',
+      }),
     }),
     {
       type: 'json',
     },
   )
   .handler(async ({ input: { id, ...restInput } }) => {
+    console.log(id, 'id', restInput, 'restInput')
     const existClient = await findClient({ id })
 
     if (!existClient) {
       throw new ZSAError('NOT_FOUND', 'Client não encontrado')
     }
-    await updateClient(
-      {
-        id,
-      },
-      {
-        ...restInput,
-      },
-    )
+    try {
+      const result = await updateClient(
+        {
+          id,
+        },
+        {
+          ...restInput,
+        },
+      )
+      console.log(result, 'result')
+    } catch (error) {
+      console.log(error, 'error')
+    }
     revalidateTag('clients')
   })

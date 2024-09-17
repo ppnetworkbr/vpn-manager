@@ -21,6 +21,9 @@ export const createClientAction = createServerAction()
       vpnUser: z.string().min(2, {
         message: 'Nome de usuário deve ter no mínimo 2 caracteres',
       }),
+      ipSourceAddress: z.string().ip({
+        message: 'IP inválido',
+      }),
     }),
     {
       type: 'json',
@@ -31,7 +34,14 @@ export const createClientAction = createServerAction()
   })
   .handler(
     async ({
-      input: { name, vpnIp, vpnPassword, vpnPreSharedKey, vpnUser },
+      input: {
+        name,
+        vpnIp,
+        vpnPassword,
+        vpnPreSharedKey,
+        vpnUser,
+        ipSourceAddress,
+      },
     }) => {
       const existClient = await findClient({ vpnIp })
       console.log(existClient, 'exitCoreVpn')
@@ -44,6 +54,7 @@ export const createClientAction = createServerAction()
         vpnIp,
         vpnPassword,
         vpnPreSharedKey,
+        ipSourceAddress,
         vpnUser,
       })
       revalidateTag('clients')

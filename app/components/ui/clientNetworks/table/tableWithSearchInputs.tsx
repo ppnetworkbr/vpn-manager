@@ -21,24 +21,17 @@ import React, { useState, ChangeEvent } from 'react'
 import StyledNoRows from './styledNoRows'
 import { DataProps } from './@types/table'
 import { grey } from '@mui/material/colors'
-import { DeleteConfirmDialog } from '@/app/components/ui/clients/deleteConfirm'
-import ClientEditModal from '@/app/components/ui/clients/editClient/editClient'
-import { Client } from '@prisma/client'
+import { DeleteConfirmDialog } from '@/app/components/ui/clientNetworks/deleteConfirm'
+import ClientEditNetwork from '@/app/components/ui/clientNetworks/editClientNetwork/editClientNetwork'
+import { clientNetworks } from '@prisma/client'
 
 interface EditModalProps {
   open: boolean
-  client: Client
+  clientNetwork: clientNetworks
 }
 
 interface ColumnProps {
-  id:
-    | 'name'
-    | 'vpnIp'
-    | 'vpnPreSharedKey'
-    | 'ipSourceAddress'
-    | 'vpnPassword'
-    | 'vpnUser'
-    | 'action'
+  id: 'name' | 'network' | 'Client' | 'action'
   label: string
   minWidth?: number
   align?: 'right' | 'left' | 'center'
@@ -47,10 +40,10 @@ interface ColumnProps {
 
 // name of the columns
 interface TableWithSearchBoxProps {
-  clients: DataProps[]
+  clientNetworks: DataProps[]
 }
 export default function TableWithSearchBox({
-  clients,
+  clientNetworks,
 }: TableWithSearchBoxProps) {
   const columns: readonly ColumnProps[] = [
     {
@@ -58,24 +51,12 @@ export default function TableWithSearchBox({
       label: 'Nome',
     },
     {
-      id: 'vpnIp',
-      label: 'IP VPN',
+      id: 'Client',
+      label: 'Cliente',
     },
     {
-      id: 'vpnUser',
-      label: 'Usuário VPN',
-    },
-    {
-      id: 'vpnPreSharedKey',
-      label: 'Pre Shared Key L2TP',
-    },
-    {
-      id: 'vpnPassword',
-      label: 'Senha VPN',
-    },
-    {
-      id: 'ipSourceAddress',
-      label: 'Src Address IP',
+      id: 'network',
+      label: 'Network',
     },
 
     {
@@ -99,19 +80,20 @@ export default function TableWithSearchBox({
   )
 
   const handleCloseEditModal = () => {
-    setEditModal({ open: false, client: {} as Client })
+    setEditModal({ open: false, clientNetwork: {} as clientNetworks })
   }
+  console.log(clientNetworks)
   const filteredData =
-    clients && clients.length > 0 && clients[0].id
-      ? clients.filter((client) => {
+    clientNetworks && clientNetworks.length > 0 && clientNetworks[0].id
+      ? clientNetworks.filter((clientNetwork) => {
           return (
-            client.vpnIp.toLowerCase().includes(search.toLowerCase()) ||
-            client.vpnUser.toLowerCase().includes(search.toLowerCase()) ||
-            client.vpnPreSharedKey
-              .toLocaleLowerCase()
-              .includes(search.toLocaleLowerCase()) ||
-            client.name.toLowerCase().includes(search.toLowerCase()) ||
-            client.vpnPassword.toLowerCase().includes(search.toLowerCase())
+            clientNetwork.network
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            clientNetwork.Client.name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            clientNetwork.name.toLowerCase().includes(search.toLowerCase())
           )
         })
       : []
@@ -138,14 +120,11 @@ export default function TableWithSearchBox({
   function handleEditClick(data: DataProps) {
     setEditModal({
       open: true,
-      client: {
+      clientNetwork: {
         id: data.id,
         name: data.name,
-        vpnIp: data.vpnIp,
-        ipSourceAddress: data.ipSourceAddress,
-        vpnUser: data.vpnUser,
-        vpnPassword: data.vpnPassword,
-        vpnPreSharedKey: data.vpnPreSharedKey,
+        network: data.network,
+        clientId: data.clientId,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
         deletedAt: data.deletedAt,
@@ -231,45 +210,32 @@ export default function TableWithSearchBox({
                       {columns.map((column) => {
                         const value = row[column.id]
                         switch (column.id) {
-                          case 'vpnIp':
+                          case 'Client':
                             return (
                               <TableCell key={column.id} align={column.align}>
-                                {value}
+                                {typeof value === 'object' &&
+                                value !== null &&
+                                'name' in value
+                                  ? value.name
+                                  : value}
                               </TableCell>
                             )
-                          case 'vpnPassword':
+                          case 'network':
                             return (
                               <TableCell key={column.id} align={column.align}>
-                                {value}
+                                {typeof value === 'object' && value !== null
+                                  ? value.name
+                                  : value}
                               </TableCell>
                             )
                           case 'name':
                             return (
                               <TableCell key={column.id} align={column.align}>
-                                {value}
+                                {typeof value === 'object' && value !== null
+                                  ? JSON.stringify(value)
+                                  : value}
                               </TableCell>
                             )
-                          case 'vpnPreSharedKey':
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {value}
-                              </TableCell>
-                            )
-
-                          case 'ipSourceAddress':
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {!value ? 'Não setado' : value}
-                              </TableCell>
-                            )
-
-                          case 'vpnUser':
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {value}
-                              </TableCell>
-                            )
-
                           default:
                             return (
                               <TableCell key={column.id} align={column.align}>
@@ -348,9 +314,9 @@ export default function TableWithSearchBox({
           onClose={() => setDeleteDialog({ ...deleteDialog, open: false })}
           message={deleteDialog.message}
         />
-        <ClientEditModal
+        <ClientEditNetwork
           isOpenModal={editModal.open}
-          client={editModal.client}
+          clientNetwork={editModal.clientNetwork}
           closeModal={handleCloseEditModal}
         />
       </Box>

@@ -1,15 +1,14 @@
-import getCoreVpns from '@/app/actions/core-vpn/getCoreVpn'
+import getClientsNetworks from '@/app/actions/client-networks/getClientNetworks'
 import { ProtectedLayout } from '@/app/components/layouts/protected'
-import AddCoreVpn from '@/app/components/ui/core-vpn/addCore/addCore'
-import TableWithSearchBox from '@/app/components/ui/core-vpn/table/tableWithSearchInputs'
+import AddClientNetwork from '@/app/components/ui/clientNetworks/addClientNetwork/addClientNetwork'
+import TableWithSearchBox from '@/app/components/ui/clientNetworks/table/tableWithSearchInputs'
 
-export default async function PageNetworkClients() {
-
+export default async function PageClientNetworks() {
+  const clientNetworks = await getClientsNetworks()
   return (
     <ProtectedLayout>
-      <h1>
-        Network
-      </h1>
+      <AddClientNetwork />
+      <TableWithSearchBox clientNetworks={clientNetworks} />
     </ProtectedLayout>
   )
 }

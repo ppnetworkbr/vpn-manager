@@ -33,5 +33,8 @@ export const findClient = async (where: Prisma.ClientWhereUniqueInput) => {
 export async function findManyClients(where: Prisma.ClientWhereInput) {
   return await prisma.client.findMany({
     where,
+    orderBy:{
+      name: 'asc'
+    }
   })
 }

@@ -14,6 +14,9 @@ const clientSchema = z.object({
   vpnIp: z.string().ip({
     message: 'IP inválido',
   }),
+  ipSourceAddress: z.string().ip({
+    message: 'IP inválido',
+  }),
   vpnPreSharedKey: z.string().min(6, {
     message: 'Senha deve ter no mínimo 6 caracteres',
   }),
@@ -47,9 +50,11 @@ export default function ClientEditForm({
     defaultValues: {
       id: client.id,
       name: client.name,
+      ipSourceAddress: client.ipSourceAddress,
       vpnUser: client.vpnUser,
       vpnIp: client.vpnIp,
       vpnPassword: client.vpnPassword,
+
       vpnPreSharedKey: client.vpnPreSharedKey,
     },
   })
@@ -81,7 +86,7 @@ export default function ClientEditForm({
     } else {
       setToast({
         open: true,
-        message: 'Core criado com sucesso',
+        message: 'Cliente alterado com sucesso',
         variant: 'success',
       })
 
@@ -142,6 +147,15 @@ export default function ClientEditForm({
         error={!!errors?.vpnPreSharedKey}
         helperText={errors.vpnPreSharedKey?.message}
         {...register('vpnPreSharedKey')}
+        required
+      />
+      <TextField
+        label="Ip Source Address"
+        fullWidth
+        margin="normal"
+        error={!!errors?.ipSourceAddress}
+        helperText={errors.ipSourceAddress?.message}
+        {...register('ipSourceAddress')}
         required
       />
 

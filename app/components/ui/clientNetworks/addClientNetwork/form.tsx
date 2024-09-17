@@ -1,40 +1,60 @@
-import { createClientAction } from '@/app/actions/clients/createClient'
-import { Box, TextField, Button } from '@mui/material'
+import { createClientNetworkAction } from '@/app/actions/client-networks/createClientNetwork'
+import { Box, TextField, Button, MenuItem } from '@mui/material'
 import { useServerAction } from 'zsa-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ToastAlertProps } from '../../shared/alert/toastAlert'
+import { useEffect, useState } from 'react'
+import { Client } from '@prisma/client'
+import { getClientUseServerAction } from '@/app/actions/clients/getClients'
 
 const client = z.object({
-  name: z.string().min(5, {
+  name: z.string().min(2, {
     message: 'Nome deve ter no mínimo 5 caracteres',
   }),
-  vpnIp: z.string().ip({
-    message: 'IP inválido',
-  }),
-  ipSourceAddress: z.string().ip({
-    message: 'IP inválido',
-  }),
-  vpnPreSharedKey: z.string().min(6, {
-    message: 'Senha deve ter no mínimo 6 caracteres',
-  }),
-  vpnPassword: z.string().min(6, {
-    message: 'Senha deve ter no mínimo 6 caracteres',
-  }),
-  vpnUser: z.string().min(2, {
-    message: 'Nome de usuário deve ter no mínimo 2 caracteres',
-  }),
+  network: z.string().refine(
+    (cidr) => {
+      const regex =
+        /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/
+      return regex.test(cidr)
+    },
+    { message: 'Network inválido' },
+  ),
+  clientId: z.string(),
 })
 interface clientInputs extends z.infer<typeof client> {}
-export default function ClientAddForm({
+export default function ClientNetworkAddForm({
   onClose,
   setToast,
 }: {
   onClose: () => void
   setToast: (toastData: ToastAlertProps) => void
 }) {
-  const { execute, isPending } = useServerAction(createClientAction, {})
+  const [clientId, setClientId] = useState('')
+  const [clients, setClients] = useState<Client[]>([])
+
+  const getClients = useServerAction(getClientUseServerAction, {})
+
+  async function fetchClientsAndSet() {
+    const [clients, err] = await getClients.execute()
+    if (err) {
+      setToast({
+        open: true,
+        message: err.message,
+        variant: 'error',
+      })
+    } else {
+      setClients(clients)
+    }
+  }
+
+  useEffect(() => {
+    fetchClientsAndSet()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const { execute, isPending } = useServerAction(createClientNetworkAction, {})
   const {
     handleSubmit,
     register,
@@ -45,13 +65,13 @@ export default function ClientAddForm({
     resolver: zodResolver(client),
     defaultValues: {
       name: '',
-      vpnUser: '',
-      vpnIp: '',
-      ipSourceAddress: '',
-      vpnPassword: '',
-      vpnPreSharedKey: '',
+      clientId: '',
+      network: '',
     },
   })
+  async function handleChangeClientId(e: React.ChangeEvent<HTMLInputElement>) {
+    setClientId(e.target.value)
+  }
   async function onSubmit(dataForm: clientInputs) {
     const [, err] = await execute(dataForm)
 
@@ -98,7 +118,7 @@ export default function ClientAddForm({
     } else {
       setToast({
         open: true,
-        message: 'Cliente criado com sucesso',
+        message: 'Rede criada com sucesso',
         variant: 'success',
       })
 
@@ -126,50 +146,37 @@ export default function ClientAddForm({
         helperText={errors.name?.message}
       />
       <TextField
-        label="IP"
+        label="Network"
         fullWidth
         margin="normal"
-        error={!!errors?.vpnIp}
-        helperText={errors.vpnIp?.message}
-        {...register('vpnIp')}
+        {...register('network')}
         required
+        error={!!errors?.network}
+        helperText={errors.network?.message}
       />
 
       <TextField
-        label="Usuário"
+        select
         fullWidth
         margin="normal"
-        error={!!errors?.vpnUser}
-        helperText={errors.vpnUser?.message}
-        {...register('vpnUser')}
-        required
-      />
-      <TextField
-        label="Senha"
-        fullWidth
-        margin="normal"
-        error={!!errors?.vpnPassword}
-        helperText={errors.vpnPassword?.message}
-        {...register('vpnPassword')}
-        required
-      />
-      <TextField
-        label="Pre Shared Key"
-        fullWidth
-        margin="normal"
-        error={!!errors?.vpnPreSharedKey}
-        helperText={errors.vpnPreSharedKey?.message}
-        {...register('vpnPreSharedKey')}
-        required
-      />
-      <TextField
-        label="Ip Address Source"
-        fullWidth
-        margin="normal"
-        error={!!errors?.ipSourceAddress}
-        helperText={errors.ipSourceAddress?.message}
-        {...register('ipSourceAddress')}
-      />
+        label="Cliente"
+        value={clientId}
+        helperText={errors?.clientId?.message}
+        error={!!errors?.clientId}
+        slotProps={{
+          input: {
+            ...register('clientId'),
+            onChange: handleChangeClientId,
+          },
+        }}
+      >
+        {clients.map((client) => (
+          <MenuItem key={client.id} value={client.id}>
+            {client.name}
+          </MenuItem>
+        ))}
+      </TextField>
+
       <Button
         variant="contained"
         disabled={isPending}

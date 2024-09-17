@@ -3,6 +3,8 @@ import { createServerAction, ZSAError } from 'zsa'
 import { findManyUsers, updateUser } from '@/lib/actions/user.db.action'
 import { findManyCoreVpn } from '@/lib/actions/core-vpn.db.action'
 import { MikrotikManager } from '@/lib/ssh/mikrotik'
+import { findManyClientNetworks } from '@/lib/actions/clientNetworks.db.action'
+import { findManyClients } from '@/lib/actions/client.db.action'
 
 export const checkAllConfigs = createServerAction().handler(async () => {
   const allCoresVpns = await findManyCoreVpn({})
@@ -23,7 +25,7 @@ export const checkAllConfigs = createServerAction().handler(async () => {
           }
         }
 
-        // criar usuario l2tp no mikrotik
+        // // criar usuario l2tp no mikrotik
 
         for (const user of users) {
           if (!user.l2tpPassword) {
@@ -38,8 +40,61 @@ export const checkAllConfigs = createServerAction().handler(async () => {
             throw new ZSAError('NOT_FOUND', (error as Error).message)
           }
         }
-        /// etapa para criar as vpns e ip list dos clientes
 
+        /// etapa para criar as vpns e ip list dos clientes
+        const clientsNetworks = await findManyClientNetworks({
+          where: {},
+          include: {
+            Client: true,
+          },
+        })
+        // pegando quantidade de ip list
+        const lengthIpAddressList = (await mikrotik.getIpAddressList()).length
+        
+        // removendo todas as ip list
+        if (lengthIpAddressList > 0) {
+          for (let i = 0; i < lengthIpAddressList; i++) {
+            await mikrotik.removeIpAddressList(i)
+          }
+        }
+
+        // pegando quantidade de rotas
+        const lengthIpRoutes =  (await mikrotik.getIpRoute()).length
+
+        // removendo todas as rotas
+        for (let i = 0; i < lengthIpRoutes; i++) {
+          await mikrotik.removeIpRoute(i)
+        }
+        // pega quantidade de nat
+       const lengthIpNat =  await mikrotik.getIpNatLines()
+       
+       for (let i = 0; i < lengthIpNat; i++) {
+         await mikrotik.removeIpNat(i)
+        }
+        // criando as vpns e ip list dos clientes
+        const clients = await findManyClients({})
+        for (const client of clients) {
+          await mikrotik.removeVpnClient(`VPN-MANAGER-${client.name}`)
+          await mikrotik.createVpnClient({
+            ip: client.vpnIp,
+            username: client.vpnUser,
+            preSharedKey: client.vpnPreSharedKey,
+            password: client.vpnPassword,
+            name: client.name,
+            ipSrcAddress: client.ipSourceAddress,
+          })
+          await mikrotik.createIpRoute({name:client.name})
+          await mikrotik.createIpNat({name: client.name})
+        }
+        for (const { network, Client } of clientsNetworks) {
+          try {
+            await mikrotik.createIpAddressList(network, Client.name)
+            
+          } catch (error) {
+            console.error(error, 'Error aqui garau')
+          }
+        }
+       
         mikrotik.disconnect()
       } catch (error) {
         await mikrotik.disconnect()

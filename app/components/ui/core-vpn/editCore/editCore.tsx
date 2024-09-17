@@ -21,6 +21,7 @@ export default function UserEditModal({
   }
 
   return (
+    <>
     <Modal
       open={isOpenModal}
       handleClose={closeModal}
@@ -31,11 +32,13 @@ export default function UserEditModal({
         coreVpn={coreVpn}
         setToast={handleSetToast}
       />
-      <ToastAlert
+      
+    </Modal>
+    <ToastAlert
         message={toast.message}
         open={toast.open}
         variant={toast.variant}
       />
-    </Modal>
+    </>
   )
 }
