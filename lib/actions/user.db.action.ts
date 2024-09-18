@@ -27,6 +27,19 @@ export const deleteUser = async (where: Prisma.UserWhereUniqueInput) => {
 export const findUser = async (where: Prisma.UserWhereUniqueInput) => {
   return await prisma.user.findUnique({
     where,
+    select: {
+      id: true,
+      email: true,
+      password: true,
+      role: true,
+      l2tpPassword: true,
+      clientIdForVpn: true,
+      emailVerified: true,
+      createdAt: true,
+      deletedAt: true,
+      updatedAt: true,
+      name: true,
+    },
   })
 }
 
