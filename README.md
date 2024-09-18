@@ -6,53 +6,53 @@
 
 Este projeto surgiu da nossa necessidade de gerenciar diversas conexões VPN em nosso sistema de consultoria. Com ele, você pode:
 
-- [x]  Gerenciar, coordenar e aplicar políticas em todas as VPNs dos seus clientes.
-- [x]  Controlar o acesso dos usuários a cada VPN através de uma interface web intuitiva.
-- [x]  Orquestrar a seleção de clientes para cada usuário, permitindo que eles alternem entre VPNs facilmente.
-- [x]  Gerenciar redes, incluindo a criação, modificação e exclusão de regras de membros e firewalls.
-- [x]  Marcar rotas para direcionar o tráfego da rede de cada cliente para o usuário desejado.
-- [ ]  Marcar rotas especificas para determinados clientes.
-
+- [x] Gerenciar, coordenar e aplicar políticas em todas as VPNs dos seus clientes.
+- [x] Controlar o acesso dos usuários a cada VPN através de uma interface web intuitiva.
+- [x] Orquestrar a seleção de clientes para cada usuário, permitindo que eles alternem entre VPNs facilmente.
+- [x] Gerenciar redes, incluindo a criação, modificação e exclusão de regras de membros e firewalls.
+- [x] Marcar rotas para direcionar o tráfego da rede de cada cliente para o usuário desejado.
+- [ ] Marcar rotas específicas para determinados clientes.
 
 ## Roadmap
 
-- Adicionar gerenciamento de rotas mais especificas
+- Adicionar gerenciamento de rotas mais específicas.
+- Adicionar suporte ao WireGuard.
 
-- Adicionar suporte ao wireguard
 
 
 ## Váriaveis de Ambiente
 
-To run this project, you will need to add the following environment variables to your .env file
-
-`AUTH_SECRET=` token utilizando para criptografia do JWT
-
-`L2TP-PRESHARED-KEY=` chave pré-compartilhada configurada no mikrotik
-
-`DATABASE_URL=` url de conexão do postgres exemplo: `postgresql://username:password@localhost:5432/database?schema=public`
+Para executar este projeto, você precisará adicionar as seguintes variáveis de ambiente ao seu arquivo .env:   
 
 
-## Rodando Local
+`AUTH_SECRET=`token utilizado para criptografia do JWT
 
-Clone o repositorio 
+`L2TP-PRESHARED-KEY=` chave pré-compartilhada configurada no MikroTik
+
+`DATABASE_URL=` URL de conexão do Postgres. Exemplo: `postgresql://username:password@localhost:5432/database?schema=public`
+
+
+## Executando Localmente
+
+Clone o repositório:
 
 ```bash
-  git clone https://github.com/ppnetworkbr/vpn-manager
+git clone [https://github.com/ppnetworkbr/vpn-manager](https://github.com/ppnetworkbr/vpn-manager)
 ```
 
-Acesse a pasta do projeto
+Acesse a pasta do projeto:
 
 ```bash
   cd vpn-manager
 ```
 
-Instala-le as dependecias 
+Instale as dependências:
 
 ```bash
   npm install --force
 ```
 
-Rode as migrações de banco de dados
+Execute as migrações de banco de dados:
 
 ```bash
   npx prisma migrate deploy
@@ -66,12 +66,9 @@ Inicie o serviço
 
 ## Tecnologia utilizadas
 
-**Client:** React, NextJS, MUI, AuthJS
-
-**Server:** Node, NEXTJS, Prisma, AuthJS, ssh2
-
-**DataBase:** Postgres
-
+**Cliente**: React, Next.js, MUI, Auth.js.
+**Servidor**: Node, Next.js, Prisma, Auth.js, ssh2.
+**Banco de Dados**: Postgres.
 
 ## Autores
 
@@ -79,7 +76,8 @@ Inicie o serviço
 - [@ppnetwork](https://www.instagram.com/ppnetwork.consultoria/)
 
 
-## Obs
+## Observações
+Documentação em processo de escrita.
 
-Documentação em processo de escrita
+
 
