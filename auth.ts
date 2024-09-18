@@ -18,6 +18,7 @@ export class InvalidLoginError extends CredentialsSignin {
 export type ExtendedUser = DefaultSession['user'] & {
   role: Roles
   l2tpPassword: string
+  clientIdForVpn: string
 }
 declare module 'next-auth' {
   interface Session {
@@ -58,7 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const matchPassword = await bcrypt.compare(password, user.password)
         if (!matchPassword) throw new Error('Usuário e/ou senha incorretos')
-
+        console.log(user, 'user')
         return user
       },
     }),
@@ -72,6 +73,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.role = user.role
         token.l2tpPassword = user.l2tpPassword
+        console.log(user.clientIdForVpn, 'user.clientIdForVpn')
+        token.clientIdForVpn = !user.clientIdForVpn ? '' : user.clientIdForVpn
       }
       return token
     },
@@ -83,6 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.role && session.user) {
         session.user.role = token.role as Roles
         session.user.l2tpPassword = token.l2tpPassword as string
+        session.user.clientIdForVpn = token.clientIdForVpn as string
       }
 
       return session
