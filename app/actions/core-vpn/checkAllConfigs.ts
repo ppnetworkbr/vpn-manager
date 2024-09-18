@@ -86,6 +86,7 @@ export const checkAllConfigs = createServerAction().handler(async () => {
           await mikrotik.createIpRoute({ name: client.name })
           await mikrotik.createIpNat({ name: client.name })
         }
+        await mikrotik.moveToUpNat()
         for (const { network, Client } of clientsNetworks) {
           try {
             await mikrotik.createIpAddressList(network, Client.name)
