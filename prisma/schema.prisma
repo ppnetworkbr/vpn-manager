@@ -39,6 +39,7 @@ model Client {
   updatedAt       DateTime         @default(now())
   deletedAt       DateTime?
   clientNetworks  clientNetworks[]
+  User            User[]
 }
 
 model CoreVpn {
@@ -63,18 +64,20 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  password      String
-  role          Roles     @default(technical)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now())
-  l2tpPassword  String?
-  deletedAt     DateTime?
-  emailVerified DateTime?
-  Account       Account[]
-  Session       Session[]
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  password       String
+  clientIdForVpn String?
+  Client         Client?   @relation(fields: [clientIdForVpn], references: [id])
+  role           Roles     @default(technical)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  l2tpPassword   String?
+  deletedAt      DateTime?
+  emailVerified  DateTime?
+  Account        Account[]
+  Session        Session[]
 }
 
 model VerificationToken {
