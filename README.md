@@ -67,7 +67,9 @@ Inicie o serviço
 ## Tecnologia utilizadas
 
 **Cliente**: React, Next.js, MUI, Auth.js.
+
 **Servidor**: Node, Next.js, Prisma, Auth.js, ssh2.
+
 **Banco de Dados**: Postgres.
 
 ## Autores
