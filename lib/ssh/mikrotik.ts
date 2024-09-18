@@ -290,7 +290,28 @@ export class MikrotikManager {
     const command = `ip firewall nat remove ${number}`
     await this.executeCommand(command)
   }
+  async moveToUpNat() {
+    const command = 'ip firewall nat export'
+    let lines: string[]
+    lines = await this.executeCommand(command)
+    lines = lines.filter((line) => !line.includes('#'))
+    lines = lines.filter((line) => !line.includes('/ip firewall nat'))
+    lines = lines.filter((line) => line.includes('chain'))
+    // pegar index das linhas que possui VPN-MANAGER
+    const indexs = lines.map((line, index) => {
+      if (line.includes('VPN-MANAGER')) {
+        return index
+      }
+    })
 
+    await this.executeCommand('ip firewall nat print')
+    for (const index of indexs) {
+      if (index !== undefined) {
+        const command = `ip firewall nat move ${index} 0`
+        await this.executeCommand(command)
+      }
+    }
+  }
   async getIpNatLines() {
     const command = 'ip firewall nat print where comment ~"VPN-MANAGER"'
     let lines: string[]
@@ -299,5 +320,42 @@ export class MikrotikManager {
     lines = lines.filter((line) => !line.includes('Flags: X - disabled'))
     lines = lines.filter((line) => line !== '\r')
     return lines.length
+  }
+
+  async createOrChangeIpMangle({
+    userName,
+    clientName,
+  }: {
+    userName: string
+    clientName: string
+  }) {
+    const command = `ip firewall mangle add in-interface=<l2tp-${userName}>  comment="VPN-MANAGER-${userName}" dst-address-list=VPN-MANAGER-${clientName} action=mark-routing new-routing-mark=VPN-MANAGER-${clientName} chain=prerouting`
+    const result = await this.executeCommand(command)
+    if (result[0] === 'input does not match any value of interface') {
+      throw new Error('Interface não encontrada no mikrotik')
+    }
+  }
+
+  async userL2tpIsOnline(userName: string) {
+    const command = `ppp active print where name=${userName}`
+    let lines = await this.executeCommand(command)
+    lines = lines.filter((line) => !line.includes(';;;'))
+    lines = lines.filter((line) => !line.includes('Flags'))
+    lines = lines.filter((line) => !line.includes('NAME'))
+    return lines.length > 0
+  }
+
+  async getIpMangleCount(userName: string): Promise<number> {
+    const command = `ip firewall mangle print where comment ~"VPN-MANAGER-${userName}"`
+    let lines = await this.executeCommand(command)
+    lines = lines.filter((line) => !line.includes(';;;'))
+    lines = lines.filter((line) => !line.includes('Flags'))
+    lines = lines.filter((line) => line.includes(userName))
+    return lines.length
+  }
+
+  async removeIpMangle(number: number) {
+    const command = `ip firewall mangle remove ${number}`
+    await this.executeCommand(command)
   }
 }
