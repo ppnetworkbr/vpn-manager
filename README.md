@@ -37,7 +37,7 @@ Para executar este projeto, você precisará adicionar as seguintes variáveis d
 Clone o repositório:
 
 ```bash
-git clone [https://github.com/ppnetworkbr/vpn-manager](https://github.com/ppnetworkbr/vpn-manager)
+git clone https://github.com/ppnetworkbr/vpn-manager
 ```
 
 Acesse a pasta do projeto:
