@@ -50,7 +50,7 @@ export const checkAllConfigs = createServerAction().handler(async () => {
         })
         // pegando quantidade de ip list
         const lengthIpAddressList = (await mikrotik.getIpAddressList()).length
-        
+
         // removendo todas as ip list
         if (lengthIpAddressList > 0) {
           for (let i = 0; i < lengthIpAddressList; i++) {
@@ -59,17 +59,17 @@ export const checkAllConfigs = createServerAction().handler(async () => {
         }
 
         // pegando quantidade de rotas
-        const lengthIpRoutes =  (await mikrotik.getIpRoute()).length
+        const lengthIpRoutes = (await mikrotik.getIpRoute()).length
 
         // removendo todas as rotas
         for (let i = 0; i < lengthIpRoutes; i++) {
           await mikrotik.removeIpRoute(i)
         }
         // pega quantidade de nat
-       const lengthIpNat =  await mikrotik.getIpNatLines()
-       
-       for (let i = 0; i < lengthIpNat; i++) {
-         await mikrotik.removeIpNat(i)
+        const lengthIpNat = await mikrotik.getIpNatLines()
+
+        for (let i = 0; i < lengthIpNat; i++) {
+          await mikrotik.removeIpNat(i)
         }
         // criando as vpns e ip list dos clientes
         const clients = await findManyClients({})
@@ -83,18 +83,17 @@ export const checkAllConfigs = createServerAction().handler(async () => {
             name: client.name,
             ipSrcAddress: client.ipSourceAddress,
           })
-          await mikrotik.createIpRoute({name:client.name})
-          await mikrotik.createIpNat({name: client.name})
+          await mikrotik.createIpRoute({ name: client.name })
+          await mikrotik.createIpNat({ name: client.name })
         }
         for (const { network, Client } of clientsNetworks) {
           try {
             await mikrotik.createIpAddressList(network, Client.name)
-            
           } catch (error) {
             console.error(error, 'Error aqui garau')
           }
         }
-       
+
         mikrotik.disconnect()
       } catch (error) {
         await mikrotik.disconnect()

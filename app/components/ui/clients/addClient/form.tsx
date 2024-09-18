@@ -26,7 +26,7 @@ const client = z.object({
     message: 'Nome de usuário deve ter no mínimo 2 caracteres',
   }),
 })
-interface clientInputs extends z.infer<typeof client> {}
+type clientInputs = z.infer<typeof client>
 export default function ClientAddForm({
   onClose,
   setToast,

@@ -161,7 +161,8 @@ export class MikrotikManager {
   }
 
   async getIpAddressList() {
-    const command = 'ip firewall address-list print where comment ~"VPN-MANAGER"'
+    const command =
+      'ip firewall address-list print where comment ~"VPN-MANAGER"'
     let lines: string[]
     lines = await this.executeCommand(command)
     lines = lines.filter((line) => !line.includes(';;; VPN-MANAGER-'))
@@ -213,7 +214,7 @@ export class MikrotikManager {
     name,
   }: {
     ip: string
-    ipSrcAddress:string
+    ipSrcAddress: string
     username: string
     preSharedKey: string
     password: string
@@ -228,7 +229,7 @@ export class MikrotikManager {
     await this.executeCommand(command)
   }
 
-  async createIpRoute({name}: {name: string}) {
+  async createIpRoute({ name }: { name: string }) {
     const command = `ip route add gateway=VPN-MANAGER-${name} dst-address=0.0.0.0/0 routing-mark=VPN-MANAGER-${name} comment=VPN-MANAGER`
     await this.executeCommand(command)
   }
@@ -239,7 +240,6 @@ export class MikrotikManager {
   }
 
   async getIpRoute() {
-
     const command = 'ip route print where comment ~"VPN-MANAGER"'
     let lines: string[]
     lines = await this.executeCommand(command)
@@ -281,7 +281,7 @@ export class MikrotikManager {
     return ipRoute
   }
 
-  async createIpNat({name}: {name: string}) {
+  async createIpNat({ name }: { name: string }) {
     const command = `ip firewall nat add chain=srcnat action=masquerade out-interface=VPN-MANAGER-${name} comment=VPN-MANAGER`
     await this.executeCommand(command)
   }
@@ -298,6 +298,6 @@ export class MikrotikManager {
     lines = lines.filter((line) => !line.includes(';;;'))
     lines = lines.filter((line) => !line.includes('Flags: X - disabled'))
     lines = lines.filter((line) => line !== '\r')
-   return lines.length
+    return lines.length
   }
 }

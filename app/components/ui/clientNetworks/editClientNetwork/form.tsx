@@ -22,8 +22,7 @@ const clientNetworkSchema = z.object({
   clientId: z.string(),
   id: z.string(),
 })
-interface clientNetworkSchemaInputs
-  extends z.infer<typeof clientNetworkSchema> {}
+type clientNetworkSchemaInputs = z.infer<typeof clientNetworkSchema>
 export default function ClientNetworkEditForm({
   onClose,
   setToast,

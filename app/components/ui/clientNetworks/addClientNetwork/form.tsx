@@ -23,7 +23,7 @@ const client = z.object({
   ),
   clientId: z.string(),
 })
-interface clientInputs extends z.infer<typeof client> {}
+type clientInputs = z.infer<typeof client>
 export default function ClientNetworkAddForm({
   onClose,
   setToast,

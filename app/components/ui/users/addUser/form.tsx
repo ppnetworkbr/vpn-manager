@@ -20,7 +20,7 @@ const userSchema = z.object({
     errorMap: () => ({ message: 'Permissão inválida' }),
   }),
 })
-interface userSchemaInputs extends z.infer<typeof userSchema> {}
+type userSchemaInputs = z.infer<typeof userSchema>
 export default function UserAddForm({
   onClose,
   setToast,

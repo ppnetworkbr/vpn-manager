@@ -21,7 +21,7 @@ const coreVpn = z.object({
     message: 'Senha deve ter no mínimo 6 caracteres',
   }),
 })
-interface coreVpnInputs extends z.infer<typeof coreVpn> {}
+type coreVpnInputs = z.infer<typeof coreVpn>
 export default function CoreAddForm({
   onClose,
   setToast,

@@ -28,7 +28,7 @@ const clientSchema = z.object({
   }),
   id: z.string(),
 })
-interface clientSchemaInputs extends z.infer<typeof clientSchema> {}
+type clientSchemaInputs = z.infer<typeof clientSchema>
 export default function ClientEditForm({
   onClose,
   setToast,

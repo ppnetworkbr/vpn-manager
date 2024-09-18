@@ -39,6 +39,7 @@ export async function findManyUsers(where: Prisma.UserWhereInput) {
       },
     })
   } catch (error) {
+    console.error(error)
     return [{}] as User[]
   }
 }

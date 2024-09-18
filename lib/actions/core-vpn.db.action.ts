@@ -44,6 +44,21 @@ export async function findManyCoreVpn(where: Prisma.CoreVpnWhereInput) {
       where,
     })
   } catch (error) {
+    console.error(error)
+    return [] as CoreVpn[]
+  }
+}
+
+export async function findManyIpCoreVpn(where: Prisma.CoreVpnWhereInput) {
+  try {
+    return await prisma.coreVpn.findMany({
+      where,
+      select: {
+        ip: true,
+      },
+    })
+  } catch (error) {
+    console.error(error)
     return [] as CoreVpn[]
   }
 }

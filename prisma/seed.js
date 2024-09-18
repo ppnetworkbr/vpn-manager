@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-const { hashSync } = require('bcrypt')
-const { PrismaClient } = require('@prisma/client')
+import { hashSync } from 'bcrypt'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 

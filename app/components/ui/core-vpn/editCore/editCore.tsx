@@ -22,19 +22,18 @@ export default function UserEditModal({
 
   return (
     <>
-    <Modal
-      open={isOpenModal}
-      handleClose={closeModal}
-      title={`Editar Core Vpn ${coreVpn?.name ? coreVpn.name : ''}`}
-    >
-      <UserEditForm
-        onClose={closeModal}
-        coreVpn={coreVpn}
-        setToast={handleSetToast}
-      />
-      
-    </Modal>
-    <ToastAlert
+      <Modal
+        open={isOpenModal}
+        handleClose={closeModal}
+        title={`Editar Core Vpn ${coreVpn?.name ? coreVpn.name : ''}`}
+      >
+        <UserEditForm
+          onClose={closeModal}
+          coreVpn={coreVpn}
+          setToast={handleSetToast}
+        />
+      </Modal>
+      <ToastAlert
         message={toast.message}
         open={toast.open}
         variant={toast.variant}

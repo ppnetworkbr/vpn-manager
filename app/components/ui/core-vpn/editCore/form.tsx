@@ -23,7 +23,7 @@ const coreVpnSchema = z.object({
   }),
   id: z.string(),
 })
-interface coreVpnSchemaInputs extends z.infer<typeof coreVpnSchema> {}
+type coreVpnSchemaInputs = z.infer<typeof coreVpnSchema>
 export default function CoreVpnEditForm({
   onClose,
   setToast,

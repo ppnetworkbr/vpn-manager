@@ -1,4 +1,4 @@
-import MenuIcon from '@mui/icons-material/Menu'
+import { Menu as MenuIcon, MenuOpen } from '@mui/icons-material'
 import {
   IconButton,
   Box,
@@ -25,11 +25,12 @@ export default function AppBar({
   }
   const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   })<AppBarProps>(({ theme }) => ({
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
+    // transition: theme.transitions.create(['margin', 'width'], {
+    //   easing: theme.transitions.easing.sharp,
+    //   duration: theme.transitions.duration.leavingScreen,
+    // }),
     // variants: [
     //   {
     //     props: ({ open }) => open,
@@ -85,7 +86,7 @@ export default function AppBar({
               },
             ]}
           >
-            <MenuIcon />
+            {!open ? <MenuIcon /> : <MenuOpen />}
           </IconButton>
 
           {!isSmallScreen && (

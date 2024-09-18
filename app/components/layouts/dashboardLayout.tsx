@@ -24,25 +24,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     >
       <AppBar open={open} handleDrawerOpen={handleDrawerOpen} />
       <Drawer open={open} />
-      <MainContent
-        open={open}
-        sx={{
-          display: 'flex',
-          flexGrow: 1,
-          height: 'auto',
-          minWidth: 'calc(100vw - 240px)',
-          width: {
-            xs: open ? 'calc(100vw - 240px)' : '100vw',
-            sm: open ? 'calc(100vw - 240px)' : '100vw',
-          },
-          mt: '4.125rem',
-          textOverflow: 'ellipsis',
-          overflow: 'auto',
-          flexDirection: 'column',
-          borderColor: 'red',
-          border: 1,
-        }}
-      >
+      <MainContent open={open}>
         <DrawerHeader />
         {children} {/* Renderiza os filhos passados */}
       </MainContent>

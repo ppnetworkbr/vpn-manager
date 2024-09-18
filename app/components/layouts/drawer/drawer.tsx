@@ -61,6 +61,7 @@ export default function DrawerComponent({ open }: { open: boolean }) {
           boxSizing: 'border-box',
         },
       }}
+      SlideProps={{ unmountOnExit: true }}
       variant={isSmUp ? 'persistent' : 'temporary'}
       anchor="left"
       open={open}

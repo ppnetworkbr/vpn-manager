@@ -9,7 +9,7 @@ const MainContent = styled('main', {
   padding: theme.spacing(3),
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
+    duration: '0.3s',
   }),
   marginLeft: open ? `${drawerWidth}px` : `0px`, // Ajuste da margem à esquerda
   width: `calc(100vw - ${open ? drawerWidth : 0}px)`, // Cálculo da largura baseado no estado do Drawer

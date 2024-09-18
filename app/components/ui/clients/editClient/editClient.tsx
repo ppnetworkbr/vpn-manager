@@ -22,24 +22,23 @@ export default function ClientEditModal({
 
   return (
     <>
-    <Modal
-      open={isOpenModal}
-      handleClose={closeModal}
-      title={`Editar Core Vpn ${client?.name ? client.name : ''}`}
-    >
-      <ClientEditForm
-        onClose={closeModal}
-        client={client}
-        setToast={handleSetToast}
+      <Modal
+        open={isOpenModal}
+        handleClose={closeModal}
+        title={`Editar Core Vpn ${client?.name ? client.name : ''}`}
+      >
+        <ClientEditForm
+          onClose={closeModal}
+          client={client}
+          setToast={handleSetToast}
+        />
+      </Modal>
+      <ToastAlert
+        open={toast.open}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast({ ...toast, open: false })}
       />
-      
-    </Modal>
-    <ToastAlert
-    open={toast.open}
-    message={toast.message}
-    variant={toast.variant}
-    onClose={() => setToast({ ...toast, open: false })}
-  />
- </>
+    </>
   )
 }
