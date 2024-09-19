@@ -4,7 +4,7 @@ import { Roles } from '@prisma/client'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import { createServerAction, ZSAError } from 'zsa'
-import { hash } from 'bcrypt'
+import { hash } from 'bcryptjs'
 export const createUserAction = createServerAction()
   .input(
     z.object({
