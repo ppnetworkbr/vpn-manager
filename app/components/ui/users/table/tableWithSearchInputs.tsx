@@ -117,6 +117,7 @@ export default function TableWithSearchBox({ users }: TableWithSearchBoxProps) {
         id: data.id,
         name: data.name,
         email: data.email,
+        clientIdForVpn: data.clientIdForVpn,
         password: '',
         l2tpPassword: '',
         role: data.role === 'admin' ? Roles.admin : Roles.technical,
