@@ -33,7 +33,6 @@ export const editClientAction = createServerAction()
     },
   )
   .handler(async ({ input: { id, ...restInput } }) => {
-    console.log(id, 'id', restInput, 'restInput')
     const existClient = await findClient({ id })
 
     if (!existClient) {
@@ -48,7 +47,7 @@ export const editClientAction = createServerAction()
           ...restInput,
         },
       )
-      console.log(result, 'result')
+      return result
     } catch (error) {
       console.log(error, 'error')
     }

@@ -33,7 +33,7 @@ export const createCoreVpnAction = createServerAction()
   })
   .handler(async ({ input }) => {
     const exitCoreVpn = await findCoreVpn({ ip: input.ip, port: input.port })
-    console.log(exitCoreVpn, 'exitCoreVpn')
+
     if (exitCoreVpn) {
       throw new ZSAError('CONFLICT', 'Core  já cadastrado')
     }

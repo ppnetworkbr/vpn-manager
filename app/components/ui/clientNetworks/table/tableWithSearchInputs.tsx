@@ -82,7 +82,6 @@ export default function TableWithSearchBox({
   const handleCloseEditModal = () => {
     setEditModal({ open: false, clientNetwork: {} as clientNetworks })
   }
-  console.log(clientNetworks)
   const filteredData =
     clientNetworks && clientNetworks.length > 0 && clientNetworks[0].id
       ? clientNetworks.filter((clientNetwork) => {

@@ -31,7 +31,7 @@ export const createClientNetworkAction = createServerAction()
   })
   .handler(async ({ input: { name, network, clientId } }) => {
     const existClient = await findClientNetwork({ network })
-    console.log(existClient, 'exitCoreVpn')
+
     if (existClient) {
       throw new ZSAError('CONFLICT', 'Rede  já cadastrada')
     }

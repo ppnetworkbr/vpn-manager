@@ -1,3 +1,5 @@
+
+
 version: '3.7'
 
 services:
@@ -15,6 +17,22 @@ services:
       # POSTGRES_INITDB_OPTIONS: "--encoding=UTF8 --locale=en_US.utf8"
       POSTGRES_INITDB_OPTIONS: "--encoding=UTF8"
     restart: always
-
+  vpn-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vpn-manager
+    container_name: vpn-manager
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://dbdev:dbdev@postgres:5432/dbdev
+      - PORT=3000
+      - AUTH_SECRET= mysecret
+      - AUTH_TRUST_HOST= true
 volumes:
   postgres_data:
+    driver: local

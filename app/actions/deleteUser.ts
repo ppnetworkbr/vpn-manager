@@ -14,7 +14,7 @@ export const deleteUserAction = createServerAction()
     },
   )
   .handler(async ({ input }) => {
-    const existUser = await findUser({ id: input.id })
+    const existUser = await findUser({ where: { id: input.id } })
     if (!existUser) {
       throw new ZSAError('NOT_FOUND', 'Usuário não encontrado')
     }

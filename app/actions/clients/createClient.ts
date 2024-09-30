@@ -44,7 +44,7 @@ export const createClientAction = createServerAction()
       },
     }) => {
       const existClient = await findClient({ vpnIp })
-      console.log(existClient, 'exitCoreVpn')
+
       if (existClient) {
         throw new ZSAError('CONFLICT', 'Cliente  já cadastrado')
       }

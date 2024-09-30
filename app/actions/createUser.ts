@@ -24,7 +24,7 @@ export const createUserAction = createServerAction()
     },
   )
   .handler(async ({ input }) => {
-    const existUser = await findUser({ email: input.email })
+    const existUser = await findUser({ where: { email: input.email } })
     if (existUser) {
       throw new ZSAError('CONFLICT', 'Email já cadastrado')
     }

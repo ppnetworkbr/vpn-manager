@@ -13,7 +13,7 @@ export default async function Home() {
   const clients = await findManyClients({})
   const session = await auth()
 
-  const user = await findUser({ id: session?.user?.id })
+  const user = await findUser({ where: { id: session?.user?.id } })
   if (!user) return null
   return (
     <ProtectedLayout>

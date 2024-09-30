@@ -24,8 +24,12 @@ export const deleteUser = async (where: Prisma.UserWhereUniqueInput) => {
   })
 }
 
-export const findUser = async (where: Prisma.UserWhereUniqueInput) => {
-  return await prisma.user.findUnique({
+export const findUser = async ({
+  where = {},
+}: {
+  where: Prisma.UserWhereInput
+}) => {
+  return await prisma.user.findFirst({
     where,
     select: {
       id: true,
@@ -52,7 +56,7 @@ export async function findManyUsers(where: Prisma.UserWhereInput) {
       },
     })
   } catch (error) {
-    console.error(error)
+    console.error(error, 'erro ao buscar usuários')
     return [{}] as User[]
   }
 }

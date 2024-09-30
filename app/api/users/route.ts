@@ -46,7 +46,7 @@ export const POST = auth(async function POST(req) {
     const { name, email, password } = validatedData
 
     const existingUser = await findUser({
-      email,
+      where: { email },
     })
 
     if (existingUser) {
@@ -111,7 +111,7 @@ export const PUT = auth(async function PUT(req) {
     const { password, ...rest } = validatedData
 
     const existingUser = await findUser({
-      id,
+      where: { id },
     })
 
     if (!existingUser) {
@@ -173,7 +173,7 @@ export const DELETE = auth(async function DELETE(req) {
   }
 
   const existingUser = await findUser({
-    id,
+    where: { id },
   })
 
   if (!existingUser) {

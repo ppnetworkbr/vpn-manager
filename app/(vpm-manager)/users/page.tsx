@@ -5,6 +5,7 @@ import TableWithSearchBox from '@/app/components/ui/users/table/tableWithSearchI
 
 export default async function UserPage() {
   const users = await getUsers()
+  console.log(users, 'usuários ')
   return (
     <ProtectedLayout>
       <AddUser />

@@ -43,7 +43,6 @@ export default function SelectClientNetwork({
     setSelect(value)
   }
   async function onSubmit(dataForm: clientSelectSchemaInputs) {
-    console.log(dataForm)
     const [, err] = await execute(dataForm)
 
     if (err) {
