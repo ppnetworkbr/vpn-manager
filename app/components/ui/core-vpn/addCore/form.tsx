@@ -151,6 +151,7 @@ export default function CoreAddForm({
       />
       <TextField
         label="Senha"
+        type="password"
         fullWidth
         margin="normal"
         error={!!errors?.password}
