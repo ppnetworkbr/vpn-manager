@@ -289,7 +289,10 @@ export default function TableWithSearchBox({
                           case 'password':
                             return (
                               <TableCell key={column.id} align={column.align}>
-                                {value}
+                                {/* protect password */}
+                                {(String(value) ?? '').split('').map(() => {
+                                  return '*'
+                                })}
                               </TableCell>
                             )
 
