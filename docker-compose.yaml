@@ -32,6 +32,7 @@ services:
       - DATABASE_URL=postgresql://dbdev:dbdev@postgres:5432/dbdev
       - PORT=3000
       - AUTH_SECRET= mysecret
+      - L2TP-PRESHARED-KEY= my-l2tp-secret-key
       - AUTH_TRUST_HOST= true
 volumes:
   postgres_data:
