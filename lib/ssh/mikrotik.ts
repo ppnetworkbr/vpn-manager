@@ -329,7 +329,7 @@ export class MikrotikManager {
     userName: string
     clientName: string
   }) {
-    const command = `ip firewall mangle add in-interface=<l2tp-${userName}>  comment="VPN-MANAGER-${userName}" dst-address-list=VPN-MANAGER-${clientName} action=mark-routing new-routing-mark=VPN-MANAGER-${clientName} chain=prerouting`
+    const command = `ip firewall mangle add in-interface=<l2tp-${userName}>  comment="VPN-MANAGER-${userName}" dst-address-list=VPN-MANAGER-${clientName} action=mark-routing new-routing-mark=VPN-MANAGER-${clientName} chain=prerouting  passthrough=no`
     const result = await this.executeCommand(command)
     if (result[0] === 'input does not match any value of interface') {
       throw new Error('Interface não encontrada no mikrotik')
