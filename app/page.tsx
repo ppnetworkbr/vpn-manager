@@ -1,1 +1,1 @@
-export { default } from '@/app/(vpm-manager)/home/page'
+export { default } from '@/app/(vpn-manager)/home/page'
