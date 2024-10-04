@@ -34,6 +34,7 @@ export const createUserAction = createServerAction()
       name: input.name,
       email: input.email,
       password: passwordHash,
+      l2tpPassword: Math.random().toString(36).slice(-8),
       role: input.role === 'admin' ? Roles.admin : Roles.technical,
     })
     revalidateTag('users')
