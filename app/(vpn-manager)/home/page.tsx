@@ -7,6 +7,7 @@ import { Paper } from '@mui/material'
 import { auth } from '@/auth'
 import { findManyClients } from '@/lib/actions/client.db.action'
 import { findUser } from '@/lib/actions/user.db.action'
+import { redirect } from 'next/navigation'
 
 export default async function Home() {
   const ipsCoreVpn = await findManyIpCoreVpn({})
@@ -14,7 +15,7 @@ export default async function Home() {
   const session = await auth()
 
   const user = await findUser({ where: { id: session?.user?.id } })
-  if (!user) return null
+  if (!user) return redirect('/login')
   return (
     <ProtectedLayout>
       <Paper
